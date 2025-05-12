@@ -1,3 +1,4 @@
+# импорт всех необходимых библиотек и модулей
 import sys
 import numpy as np
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -22,19 +23,23 @@ COLORS = {
 #usage -      background: {COLORS['dark_blue']};
 '''
 
+# создание класса окна помощи, где показывается подсказка и формулы, по которым идут рассчеты
 class HelpWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        # задаем название и размер, в данном случае фиксированный
         self.setWindowTitle("Справка")
         self.setFixedSize(900, 700)
         
+        #создаем наш виджет(окно)
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
+        #внешний лейаут в окне с отступами по 60 пикселей от края окна
         layout = QVBoxLayout(central_widget)
         layout.setContentsMargins(60, 60, 60, 60)
         
-        # Outer frame
+        #внешняя рамка для крастоы
         outer_frame = QFrame()
         outer_frame.setFrameShape(QFrame.Box)
         outer_frame.setLineWidth(2)
@@ -44,11 +49,11 @@ class HelpWindow(QMainWindow):
         """)
         layout.addWidget(outer_frame)
         
-        # Inner layout
+        #внутренний лейаут во внешнем
         inner_layout = QVBoxLayout(outer_frame)
         inner_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Create scroll area
+        # создаем скролл
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
         scroll_area.setStyleSheet("""
@@ -75,15 +80,15 @@ class HelpWindow(QMainWindow):
             }
         """)
         
-        # Content widget
+        #виджет контента (текста)
         content_widget = QWidget()
         content_widget.setStyleSheet("background-color: #0b0b47; border: none;")
         
-        # Content layout
+        #создаем лейаут текста в нашем виджете с отступами по 20 пикселей
         content_layout = QVBoxLayout(content_widget)
         content_layout.setContentsMargins(20, 20, 20, 20)
         
-        # Content label
+        #текст, оформленный через html для читабельности формул
         content = QLabel("""
         <div style='font-family: Arial; color: white; text-align: justify;'>
             <div style='font-family: Arial; color: white; text-align: justify;'>
@@ -180,16 +185,16 @@ class HelpWindow(QMainWindow):
         content.setWordWrap(True)
         content.setAlignment(Qt.AlignJustify)
         
-        # Add content to layout
+        # добавялем текст
         content_layout.addWidget(content)
         
-        # Set widget to scroll area
+        # добавляем виджет в скролл зону
         scroll_area.setWidget(content_widget)
         
-        # Add scroll area to inner layout
+        # добавляем скролл в внутренний лейаут
         inner_layout.addWidget(scroll_area, 1)
         
-        # Close button
+        # кнопка закрыть
         self.close_btn = QPushButton("Спасибо!")
         self.close_btn.setFixedSize(750, 40)
         self.close_btn.setStyleSheet("""
@@ -207,16 +212,19 @@ class HelpWindow(QMainWindow):
         self.close_btn.clicked.connect(self.close)
         inner_layout.addWidget(self.close_btn, 0, Qt.AlignBottom | Qt.AlignHCenter)
 
+# Осносное окно
 class MainApplication(QMainWindow):
     def __init__(self):
         super().__init__()
+        # Название и размер
         self.setWindowTitle("КосмоМакарена3000")
         self.setFixedSize(900, 700)
         
+        # созщдаем основное окно
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
-
+        # задаем его стиль
         self.setStyleSheet("""
             QMainWindow {
                 background-image: url("bg.jpeg");
@@ -226,15 +234,17 @@ class MainApplication(QMainWindow):
         background-attachment: scroll;
             }""")
         
+        # добавляем отсновной лейаут с отступами от окнв
         main_layout = QVBoxLayout(central_widget)
         main_layout.setContentsMargins(70, 40, 70, 70)
         
-        # Top buttons frame
+        # добавляем кнопки сверху
         top_buttons = QHBoxLayout()
         top_buttons.setAlignment(Qt.AlignRight)
 
+        #загрузка данных
         self.load_btn = QPushButton("Загрузить данные")
-        self.load_btn.setFixedSize(180, 40)  # Квадратная кнопка
+        self.load_btn.setFixedSize(180, 40)
         self.load_btn.setStyleSheet("""
     QPushButton {
         background-color: rgba(0, 0, 50, 0.6)rgba(11, 11, 200, 0.3);  
@@ -250,9 +260,10 @@ class MainApplication(QMainWindow):
     }
         """)
         self.load_btn.clicked.connect(self.load_data)
-
+        #добавляем кнопку в виджет
         top_buttons.addWidget(self.load_btn)
 
+        # кнопка справки
         self.help_btn = QPushButton("?")
         self.help_btn.setFixedSize(40, 40)  # Квадратная кнопка
         self.help_btn.setStyleSheet("""
@@ -269,14 +280,13 @@ class MainApplication(QMainWindow):
                 }
             """)
         self.help_btn.clicked.connect(self.show_help)
-    
-        
+        # добавляем кнопку в виджет
         top_buttons.addWidget(self.help_btn)
 
-        
+        #добавляем наши кнопки на основное окно
         main_layout.addLayout(top_buttons)
 
-        # Main content area
+        #основная зона
         content_frame = QFrame()
         content_frame.setFrameShape(QFrame.Box)
         content_frame.setLineWidth(2)
@@ -290,7 +300,7 @@ class MainApplication(QMainWindow):
         content_layout = QHBoxLayout(content_frame)
         content_layout.setContentsMargins(20, 0, 20, 20)
         
-        # Left panel (navigation)
+        # левая панель с кнопками вкладок
         left_panel = QFrame()
         left_panel.setFixedWidth(158)
         left_panel.setStyleSheet("""background-color: #0b0b47;
@@ -303,6 +313,7 @@ class MainApplication(QMainWindow):
 
         nav_layout.addSpacing(55)
         
+        # создание кнопок через цикл
         self.nav_buttons = []
         buttons = [
         ("Сублимация", "sublimation"),
@@ -314,9 +325,9 @@ class MainApplication(QMainWindow):
         for text, tab_name in buttons:
             btn = QPushButton(text)
             btn.setFixedHeight(30)
-            btn.setProperty('tab_name', tab_name)  # Добавляем свойство с именем вкладки
+            btn.setProperty('tab_name', tab_name)  # добавляем свойство с именем вкладки
             
-            # Стандартный стиль
+            # стандартный стиль
             btn.setStyleSheet("""
                 QPushButton {
                     background-color: white;
@@ -338,19 +349,19 @@ class MainApplication(QMainWindow):
             btn.setFixedHeight(50)
             btn.clicked.connect(lambda checked, tn=tab_name: self.show_tab(tn))
             nav_layout.addWidget(btn)
-            self.nav_buttons.append(btn)  # Добавляем кнопку в список
+            self.nav_buttons.append(btn)  # добавляем кнопку в список
             
             
         nav_layout.addStretch()
         
-        # Right panel (tabs)
+        # правая панель - вкладки
         self.right_panel = QFrame()
         self.right_panel.setStyleSheet("""background-color: #0b0b47;
         border: none
         """)
         content_layout.addWidget(self.right_panel, 1)
         
-        # Create tabs
+        # создвем все вкладки друг на друге
         self.tabs = {
             "sublimation": self.create_sublimation_tab("Сублимация"),
             "graphs": self.create_graph_tab(),
@@ -358,16 +369,15 @@ class MainApplication(QMainWindow):
             "size": self.create_size_tab("Размеры ядра")
         }
         
-        # Stack all tabs in right panel
         self.right_layout = QVBoxLayout(self.right_panel)
         for tab in self.tabs.values():
             self.right_layout.addWidget(tab)
         
-        # Show initial tab
+        # показываем начальную вкладку
         self.show_tab("sublimation")
 
-        #create_data_tab
-
+        
+    #создание вкладки сублимация
     def create_sublimation_tab(self, title):
         tab = QWidget()
         tab.setStyleSheet("""background-color: #0b0b47;
@@ -376,11 +386,13 @@ class MainApplication(QMainWindow):
         layout = QVBoxLayout(tab)
         layout.setContentsMargins(0, 0, 0, 0)
         
-        # Input fields
+        # поля ввода
         input_frame = QWidget()
         input_layout = QVBoxLayout(input_frame)
+        # отступы между полями
         input_layout.setSpacing(10)
 
+        #стиль текста
         param_label_style = """
         QLabel {
             font-weight: bold;
@@ -412,7 +424,7 @@ class MainApplication(QMainWindow):
         row1.addWidget(param_label1)
         input_layout.addLayout(row1)
 
-        # Первое поле ввода
+        # первое поле ввода
         row2 = QHBoxLayout()
         row2.setSpacing(10)
         param_label1 = QLabel("Температура (К):")
@@ -432,7 +444,7 @@ class MainApplication(QMainWindow):
         row2.addWidget(self.input1, 1)
         input_layout.addLayout(row2)
         
-        # Второе поле ввода
+        # пторое поле ввода
         row3 = QHBoxLayout()
         row3.setSpacing(10)
         param_label2 = QLabel("Расстояние от Земли (а.е):")
@@ -452,7 +464,7 @@ class MainApplication(QMainWindow):
         row3.addWidget(self.input2, 1)
         input_layout.addLayout(row3)
         
-        # Третье поле ввода
+        # претье поле ввода
         row4 = QHBoxLayout()
         row4.setSpacing(10)
         param_label3 = QLabel("Расстояние от солнца (а.е):")
@@ -476,11 +488,11 @@ class MainApplication(QMainWindow):
 
 
         
-        # Calculate button
+        # кнопка рассчета
         
         self.calc_btn = QPushButton("Рассчитать")
         self.calc_btn.setCursor(Qt.PointingHandCursor)
-        self.calc_btn.setFixedSize(519, 40)  # Фиксированный размер
+        self.calc_btn.setFixedSize(519, 40) 
         self.calc_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
@@ -496,11 +508,11 @@ class MainApplication(QMainWindow):
                 
             }
             """)
-        self.calc_btn.clicked.connect(self.calculate_sublimation)  # Предполагая, что есть метод calculate
+        self.calc_btn.clicked.connect(self.calculate_sublimation)  
         layout.addWidget(self.calc_btn)
         layout.addSpacing(10)
 
-        # Output area
+        # поле вывода
         output_group = QFrame()
         output_group.setStyleSheet("""
         QFrame {
@@ -534,6 +546,7 @@ class MainApplication(QMainWindow):
 
         return tab
 
+    #создание вкладки массы
     def create_mass_tab(self, title):
             tab = QWidget()
             tab.setStyleSheet("""background-color: #0b0b47;
@@ -542,7 +555,7 @@ class MainApplication(QMainWindow):
             layout = QVBoxLayout(tab)
             layout.setContentsMargins(0, 0, 0, 0)
             
-            # Input fields
+            # поля ввода
             input_frame = QWidget()
             input_layout = QVBoxLayout(input_frame)
             input_layout.setSpacing(10)
@@ -577,7 +590,7 @@ class MainApplication(QMainWindow):
             row1.addWidget(param_label1)
             input_layout.addLayout(row1)
 
-            # Первое поле ввода
+            #первое поле ввода
             row2 = QHBoxLayout()
             row2.setSpacing(10)
             param_label1 = QLabel("Видимая звездная величина (m<sub>k</sub>):")
@@ -597,7 +610,7 @@ class MainApplication(QMainWindow):
             row2.addWidget(self.input1, 1)
             input_layout.addLayout(row2)
             
-            # Второе поле ввода
+            #второе поле ввода
             row3 = QHBoxLayout()
             row3.setSpacing(10)
             param_label2 = QLabel("Расстояние (Δ):")
@@ -617,7 +630,7 @@ class MainApplication(QMainWindow):
             row3.addWidget(self.input2, 1)
             input_layout.addLayout(row3)
             
-            # Третье поле ввода
+            #третье поле ввода
             row4 = QHBoxLayout()
             row4.setSpacing(10)
             param_label3 = QLabel("Радиус (r):")
@@ -641,11 +654,11 @@ class MainApplication(QMainWindow):
 
 
             
-            # Calculate button
+            # кнопка рассчитать
         
             self.calc_btn = QPushButton("Рассчитать")
             self.calc_btn.setCursor(Qt.PointingHandCursor)
-            self.calc_btn.setFixedSize(519, 40)  # Фиксированный размер
+            self.calc_btn.setFixedSize(519, 40)  
             self.calc_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
@@ -661,11 +674,11 @@ class MainApplication(QMainWindow):
                 
             }
             """)
-            self.calc_btn.clicked.connect(self.calculate_sublimation)  # Предполагая, что есть метод calculate
+            self.calc_btn.clicked.connect(self.calculate_sublimation)  
             layout.addWidget(self.calc_btn)
             layout.addSpacing(10)
 
-            # Output area
+            # поле вывода
             output_group = QFrame()
             output_group.setStyleSheet("""
             QFrame {
@@ -699,6 +712,7 @@ class MainApplication(QMainWindow):
 
             return tab
 
+    #создание вкладки размер ядра
     def create_size_tab(self, title):
             tab = QWidget()
             tab.setStyleSheet("""background-color: #0b0b47;
@@ -707,7 +721,7 @@ class MainApplication(QMainWindow):
             layout = QVBoxLayout(tab)
             layout.setContentsMargins(0, 0, 0, 0)
             
-            # Input fields
+            # поля ввода
             input_frame = QWidget()
             input_layout = QVBoxLayout(input_frame)
             input_layout.setSpacing(10)
@@ -743,7 +757,7 @@ class MainApplication(QMainWindow):
             row1.addWidget(param_label1)
             input_layout.addLayout(row1)
 
-            # Первое поле ввода
+            # первое поле ввода
             row2 = QHBoxLayout()
             row2.setSpacing(10)
             param_label1 = QLabel("Абсолютная звездная величина (H):")
@@ -763,7 +777,7 @@ class MainApplication(QMainWindow):
             row2.addWidget(self.input1, 1)
             input_layout.addLayout(row2)
             
-            # Второе поле ввода
+            # ввторое поле ввода
             row3 = QHBoxLayout()
             row3.setSpacing(10)
             param_label2 = QLabel("Альбедо (p):")
@@ -783,7 +797,7 @@ class MainApplication(QMainWindow):
             row3.addWidget(self.input2, 1)
             input_layout.addLayout(row3)
             
-            # Третье поле ввода
+            # третье поле ввода
             row4 = QHBoxLayout()
             row4.setSpacing(10)
             param_label3 = QLabel("Угловой размер:")
@@ -805,10 +819,10 @@ class MainApplication(QMainWindow):
             
             layout.addWidget(input_frame)
 
-            # Calculate button
+            # кнопка рассчитать
             self.calc_btn = QPushButton("Рассчитать")
             self.calc_btn.setCursor(Qt.PointingHandCursor)
-            self.calc_btn.setFixedSize(519, 40)  # Фиксированный размер
+            self.calc_btn.setFixedSize(519, 40) 
             self.calc_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;
@@ -824,11 +838,11 @@ class MainApplication(QMainWindow):
                 
             }
             """)
-            self.calc_btn.clicked.connect(self.calculate_sublimation)  # Предполагая, что есть метод calculate
+            self.calc_btn.clicked.connect(self.calculate_sublimation)  
             layout.addWidget(self.calc_btn)
             layout.addSpacing(10)
 
-            # Output area
+            # поле вывода
             output_group = QFrame()
             output_group.setStyleSheet("""
             QFrame {
@@ -862,12 +876,13 @@ class MainApplication(QMainWindow):
 
             return tab
 
+    #создание вкладки графиков
     def create_graph_tab(self):
         tab = QWidget()
         tab.setStyleSheet("background-color: #0b0b47;")
         layout = QVBoxLayout(tab)
         
-        # Выпадающее меню для выбора графиков
+        # выпадающее меню для выбора графиков
         graph_selector_layout = QHBoxLayout()
         graph_label = QLabel("Тип графика:")
         graph_label.setStyleSheet("""
@@ -876,12 +891,12 @@ class MainApplication(QMainWindow):
             font-size: 16px;
         """)
 
-        # Создаем выпадающий список
+        # создаем выпадающий список
         self.graph_combo = QComboBox()
         self.graph_combo.addItems(["Afρ от расстояния", "Звездной величины от расстояния", "Afρ от даты", "Звездной величины от даты"])
 
 
-        # 2. Настройка view для скругленных углов
+        # нстройка view для скругленных углов
         combo_view = QListView()
         combo_view.setStyleSheet("""
             QListView {
@@ -897,7 +912,7 @@ class MainApplication(QMainWindow):
         
         self.graph_combo.setView(combo_view)
 
-        # 3. Основной стиль комбобокса только закрытой его части
+        #основной стиль комбобокса только закрытой его части
         self.graph_combo.setStyleSheet("""
             QComboBox {
                 background-color: white;
@@ -931,14 +946,14 @@ class MainApplication(QMainWindow):
             }
         """)
 
-        # Дополнительные настройки
-        self.graph_combo.setEditable(False)  # Запрещаем редактирование
+        # дополнительные настройки
+        self.graph_combo.setEditable(False)  # запрещаем редактирование
         self.graph_combo.view().window().setWindowFlags(
             Qt.Popup | Qt.FramelessWindowHint
-        )  # Убираем стандартные рамки
+        )  # убираем стандартные рамки
         self.graph_combo.view().window().setAttribute(
             Qt.WA_TranslucentBackground
-        )  # Прозрачный фон окна
+        )  # прозрачный фон окна
 
         graph_selector_layout.addWidget(graph_label)
         graph_selector_layout.addWidget(self.graph_combo)
@@ -947,7 +962,7 @@ class MainApplication(QMainWindow):
 
         layout.addSpacing(10)
         
-        # Контейнер для графика с скруглёнными углами
+        # контейнер для графика с скруглёнными углами
         graph_container = QFrame()
         graph_container.setStyleSheet("""
             QFrame {
@@ -957,19 +972,19 @@ class MainApplication(QMainWindow):
             }
         """)
         graph_layout = QVBoxLayout(graph_container)
-        graph_layout.setContentsMargins(10, 10, 10, 10)  # Внутренние отступы
+        graph_layout.setContentsMargins(10, 10, 10, 10)  # внутренние отступы
         
         # Matplotlib canvas
-        self.figure = Figure(facecolor='white')  # Прозрачный фон фигуры
+        self.figure = Figure(facecolor='white')  # ппрозрачный фон фигуры
         self.canvas = FigureCanvas(self.figure)
         self.ax = self.figure.add_subplot(111)
-        self.ax.set_facecolor('#f8f8f8')  # Светло-серый фон области графика
+        self.ax.set_facecolor('#f8f8f8')  # светло-серый фон области графика
         
         graph_layout.addWidget(self.canvas)
         layout.addWidget(graph_container, 1)
         layout.addSpacing(15)
         
-        # Graph controls with circular buttons
+        # кнопки для управления графиком
         controls = QHBoxLayout()
         controls.setAlignment(Qt.AlignCenter)
         
@@ -981,7 +996,7 @@ class MainApplication(QMainWindow):
         
         for text, action in button_data:
             btn = QPushButton(text)
-            btn.setFixedSize(150, 40)  # Квадратная кнопка для круга
+            btn.setFixedSize(150, 40) 
             btn.setStyleSheet(f"""
                 QPushButton {{
                     background-color: white;
@@ -998,29 +1013,29 @@ class MainApplication(QMainWindow):
             btn.setCursor(Qt.PointingHandCursor)
             controls.addWidget(btn)
         
-        # Добавляем отступы между кнопками
-        controls.insertSpacing(1, 15)  # После первой кнопки
-        controls.insertSpacing(3, 15)  # После второй кнопки
+        # добавляем отступы между кнопками
+        controls.insertSpacing(1, 15)  # псле первой кнопки
+        controls.insertSpacing(3, 15)  # после второй кнопки
         
         layout.addLayout(controls)
         
         return tab
     
     def show_tab(self, tab_name):
-    # Скрываем все вкладки
+    # скрываем все вкладки
         for tab in self.tabs.values():
             tab.hide()
         
-        # Показываем нужную вкладку
+        # показываем нужную вкладку
         self.tabs[tab_name].show()
         
-        # Обновляем стили кнопок навигации
+        # Ообновляем стили кнопок навигации
         self.update_nav_buttons(tab_name)
 
     def update_nav_buttons(self, active_tab):
         for btn in self.nav_buttons:
             if btn.property('tab_name') == active_tab:
-                # Стиль для активной кнопки
+                # стиль для активной кнопки
                 btn.setStyleSheet("""
                     QPushButton {
                         background-color: #5f8bff;  /* Красный цвет */
@@ -1037,7 +1052,7 @@ class MainApplication(QMainWindow):
                     }
                 """)
             else:
-                # Стандартный стиль
+                # стандартный стиль
                 btn.setStyleSheet("""
                     QPushButton {
                         background-color: white;
