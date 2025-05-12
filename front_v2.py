@@ -9,6 +9,18 @@ from PyQt5.QtGui import QFont, QColor, QPainter, QPainterPath
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
+'''
+#будущее расширение для удобства задачи цветов
+COLORS = {
+    'white': '#ffffff',
+    'dark_blue': '#000034',
+    'highlight_blue': '#0367B0',
+    'chosen_blue': '#0367B0',
+    'chosen_highlight_blue': '#0367B0',
+}
+
+#usage -      background: {COLORS['dark_blue']};
+'''
 
 class HelpWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -36,20 +48,150 @@ class HelpWindow(QMainWindow):
         inner_layout = QVBoxLayout(outer_frame)
         inner_layout.setContentsMargins(10, 10, 10, 10)
         
-        # Content
-        content = QLabel("""Здесь будет справочная информация""")
+        # Create scroll area
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setStyleSheet("""
+            QScrollArea {
+                border: none;
+                background-color: #0b0b47;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #0b0b47;
+                width: 10px;
+                margin: 0px 0px 0px 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: white;
+                min-height: 20px;
+                border-radius: 5px;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                background: none;
+            }
+            QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                background: none;
+            }
+        """)
+        
+        # Content widget
+        content_widget = QWidget()
+        content_widget.setStyleSheet("background-color: #0b0b47; border: none;")
+        
+        # Content layout
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(20, 20, 20, 20)
+        
+        # Content label
+        content = QLabel("""
+        <div style='font-family: Arial; color: white; text-align: justify;'>
+            <div style='font-family: Arial; color: white; text-align: justify;'>
+
+                <h3 style='text-align: left;'>Памятка по использованию приложения</h3>
+
+                <p><b>Общее руководство.</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    - Приложение разработано для выполнения заданий Астрохакатона 2025, включая расчет сублимации, построение графиков, определение массы комет и размеров их ядер.<br>
+                    - Интерфейс состоит из четырех вкладок: "Сублимация", "Графики", "Масса" и "Размеры ядра".
+                </div>
+
+
+
+                <br><br>
+                <h3 style='text-align: left;'>Пошаговое использование.</h3>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    <b>- Запуск:</b> Откройте приложение, выберите нужную вкладку.<br>
+                    <b>- Загрузка данных:</b> Нажмите "Загрузить файл" и выберите .txt файл с параметрами.<br>
+                    <b>- Ввод данных:</b> Введите параметры вручную в соответствующие поля с валидацией.<br>
+                    <b>Расчет:</b> Нажмите "Рассчитать" для получения результатов.<br>
+                    <b>Визуализация:</b> Просмотрите таблицы, графики или текстовые результаты.<br>
+                </div>   
+                    
+
+
+
+                <br><br>
+                <h3 style='text-align: left;'>Вкладка 1. Рассчет сублимации. Формулы.</h3>
+                <p><b>Формула температуры сублимации [K]:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    T<sub>sub</sub>(r<sub>☉</sub>, r<sub>⊕</sub>) = 1.3 × 10<sup>3</sup> × ξ<sup>-1</sup> × (H / 3.2 × 10<sup>10</sup>) × (μ / 170) × (r<sub>☉</sub> / 1 a.e.)<sup>-1/2</sup> × (1 + 0.1 / (1 + (r<sub>⊕</sub> / R<sub>⊕</sub>)<sup>2</sup>)) <br>
+                    где ξ = 1 + 0.02 × ln(P<sub>0</sub> / 6.7×10<sup>14</sup>), R<sub>⊕</sub> = 6371 км (радиус Земли)
+                </div>
+
+                <p><b>Суммарная температура:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    T<sub>total</sub> = [ ( (1-A) × 1361 × r<sub>☉</sub><sup>-2</sup> / (4 × σ × ε) ) + ( 288<sup>4</sup> × (R<sub>⊕</sub> / r<sub>⊕</sub>)<sup>2</sup> × (1 + α)<sup>4</sup> ) ]<sup>1/4</sup> <br>
+                    где A - альбедо частицы (0–1), σ = 5.67×10<sup>-8</sup> Вт/м<sup>2</sup>К<sup>4</sup> (постоянная Стефана-Больцмана), α ≈ 0.3 - доля отражённого Землёй света, R<sub>⊕</sub> = 6371 км (радиус Земли)
+                </div>
+
+                <p><b>Условие сублимации:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    T<sub>total</sub> ≥ T<sub>sub</sub> <span style='font-size: 0.9em;'>и при r<sub>⊕</sub> ≤ 1.1 R<sub>⊕</sub></span>, P<sub>vap</sub>(T) > P<sub>атмосферы</sub>
+                </div>
+
+
+
+                <br><br>
+                <h3 style='text-align: left;'>Вкладка 2. Графики. Формулы.</h3>
+                <p><b>Зависимость от расстояния:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    Afρ(r<sub>☉</sub>) = Afρ<sub>0</sub> × (r<sub>☉</sub> / r<sub>0</sub>)<sup>k</sup> 
+                </div>
+                <p><b>Звездная величина:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    m = H + 5 × log<sub>10</sub>(Δ) + 2.5 × n × log<sub>10</sub>(r<sub>☉</sub>)
+                </div>
+                <p><b>Временная зависимость:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    Afρ(t) = Afρ<sub>peak</sub> × exp( - (t - t<sub>0</sub>)<sup>2</sup> / (2τ<sup>2</sup>) )
+                </div>
+                <p><b>Временная величина:</b></p>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    m(t) = m<sub>0</sub> + 2.5 × β × log<sub>10</sub>(r<sub>☉</sub>(t) / r<sub>0</sub>)
+                </div>
+
+
+
+                <br><br>
+                <h3 style='text-align: left;'>Вкладка 3. Рассчет массы, выделяемой кометой. Формула.</h3>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    N = 10<sup>-0.4×(m<sub>k</sub> - m<sub>ЛК</sub>)</sup> × Δ<sup>2</sup> × r<sup>2</sup> / (1.37×10<sup>-38</sup> × f(c<sub>2</sub>))<br>
+                    где m<sub>ЛК</sub> = -13.78<sup>m</sup>, f(c<sub>2</sub>) = 0.031
+                </div>
+
+
+
+                <br><br>
+                <h3 style='text-align: left;'>Вкладка 4. Рассчет диаметра ядра кометы. Формула.</h3>
+                <div style='text-align: left; margin: 10px 0; line-height: 1.35;'>
+                    D = 1329 / √p<sub>v</sub> × 10<sup>-0.2×H</sup> <span style="font-size: 0.95em;">(диаметр ядра)</span>
+                </div>                 
+            </div>
+        </div>
+        """)
+
         content.setStyleSheet("""background-color: #0b0b47;
         border-radius: 20px;      
         color: white;
         border: none;
+        padding: 20px;
         """)
-        content.setAlignment(Qt.AlignCenter)
-        inner_layout.addWidget(content, 1)
+        content.setWordWrap(True)
+        content.setAlignment(Qt.AlignJustify)
+        
+        # Add content to layout
+        content_layout.addWidget(content)
+        
+        # Set widget to scroll area
+        scroll_area.setWidget(content_widget)
+        
+        # Add scroll area to inner layout
+        inner_layout.addWidget(scroll_area, 1)
         
         # Close button
-
         self.close_btn = QPushButton("Спасибо!")
-        self.close_btn.setFixedSize(750, 40)  # Квадратная кнопка
+        self.close_btn.setFixedSize(750, 40)
         self.close_btn.setStyleSheet("""
             QPushButton {
                 background-color: white;  
@@ -62,8 +204,6 @@ class HelpWindow(QMainWindow):
                 background-color: #aaccff;
                 }
             """)
-        self.close_btn.clicked.connect(self.close)
-
         self.close_btn.clicked.connect(self.close)
         inner_layout.addWidget(self.close_btn, 0, Qt.AlignBottom | Qt.AlignHCenter)
 
@@ -167,7 +307,7 @@ class MainApplication(QMainWindow):
         buttons = [
         ("Сублимация", "sublimation"),
         ("Графики", "graphs"),
-        ("Масса комет", "mass"),
+        ("Масса", "mass"),
         ("Размеры ядра", "size")
     ]
 
@@ -932,6 +1072,8 @@ class MainApplication(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    app.setStyle("Fusion")
     window = MainApplication()
     window.show()
     sys.exit(app.exec_())
